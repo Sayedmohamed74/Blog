@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+
+.container{
+  max-width: 1920px;
+  padding-left: 3%;
+  padding-right: 3%;
+}
+
+.logo{
+width: 190px;
+}
+@media (max-width: 768px) {
+  .logo{
+    width: 124px;
+  }
+}
+.logo img{
+  width: 100%;
+}
