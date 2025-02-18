@@ -10,7 +10,7 @@ export default function CardPost() {
             <span className="text-neutral-400 ">12/12/2021</span>
         </div>
         <h3 className="text-lg font-semibold">Title post</h3>
-        <p className="text-sm text-gray-500">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quidem.</p>
+        <p className="text-sm text-gray-500">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatibus harum voluptates illum nihil similique? Facilis, facere dolor! Odit sequi eius culpa tempora ex cum quisquam harum labore et. Nam, molestiae.</p>
       </div>
     </div>
   );
