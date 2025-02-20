@@ -1,12 +1,49 @@
 @import "tailwindcss";
 
-
+:root{
+  --width-sidebar: 250px;
+}
 .container{
   max-width: 1920px;
   padding-left: 3%;
   padding-right: 3%;
 }
 
+.sidebar{
+  width: var(--width-sidebar);
+  height: 100%;
+  position: fixed;
+
+  left: 0;
+  background-color: #ffffff;
+  z-index: 10;
+  overflow: hidden;
+  transition: 0.5s;
+}
+.sidebar.active{
+  
+  width: 65px;
+}
+.btn-active{
+  width: 28px;
+  height: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: rotate(0deg);
+  transition: 0.5s;
+  color: white;
+}
+.sidebar.active .btn-active{
+transform: rotate(180deg);
+}
+.sidebar.active + .margin-content-sidebar{
+  margin-left: 65px;
+}
+.margin-content-sidebar{
+  margin-left: var(--width-sidebar);
+  transition: .5s;
+}
 .logo{
 width: 190px;
 }

@@ -6,6 +6,10 @@ import PagePostsByCategory from "./pages/public/PagePostsByCategory";
 import PageHome from "./pages/public/PageHome";
 import PageSignUp from "./pages/public/PageSignUp";
 import PageSignIn from "./pages/public/PageSignIn";
+import Dashboard from "./pages/dashboard/Dashboard";
+import Posts from "./pages/dashboard/Posts";
+import Categories from "./pages/dashboard/Categories";
+import Users from "./pages/dashboard/Users";
 
 function App() {
   return (
@@ -13,11 +17,17 @@ function App() {
       <BrowserRouter>
         <Header />
         <Routes>
-          <Route path="/" element={<PageHome/>} />
-          <Route path="/sign-up" element={<PageSignUp/>} />
-          <Route path="/sign-in" element={<PageSignIn/>} />
+          <Route path="/" element={<PageHome />} />
+          <Route path="/sign-up" element={<PageSignUp />} />
+          <Route path="/sign-in" element={<PageSignIn />} />
           <Route path="/post" element={<PagePost />} />
           <Route path="/category/" element={<PagePostsByCategory />} />
+          <Route path="/dashboard/" element={<Dashboard />} >
+            <Route path="posts" element={<Posts />} />
+            <Route path="categories" element={<Categories />} />
+            <Route path="users" element={<Users />} />
+          </Route>
+        
         </Routes>
       </BrowserRouter>
     </>

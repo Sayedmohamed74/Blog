@@ -10,12 +10,12 @@ export default function Header() {
         <div className=" flex justify-between items-center py-2">
           <div className="logo">
             <Link to={"/"}>
-              <img src="./logo.svg" alt="logo" />
+              <img src="/logo.svg" alt="logo" />
             </Link>
           </div>
 
           <div className="flex items-center gap-3 text-sm font-medium">
-            <Link
+          {/*   <Link
               to={"/sign-in"}
               className=" px-3 py-2 bg-blue-400 hover:bg-white text-white hover:text-blue-400 transition-colors rounded-sm"
             >
@@ -26,12 +26,12 @@ export default function Header() {
               className="px-3 py-2 bg-white text-blue-400 hover:bg-blue-400 hover:text-white transition-colors  rounded-sm"
             >
               sign up
-            </Link>
-           {/*  <p className=" text-blue-700 text-[24px]">sayed</p>
+            </Link> */}
+          <p className=" text-blue-700 text-[24px]">sayed</p>
 
             <button className=" px-3 py-2 bg-blue-400 hover:bg-white text-white hover:text-blue-400 transition-colors rounded-sm">
               Log out
-            </button> */}
+            </button>
           </div>
         </div>
       </nav>
