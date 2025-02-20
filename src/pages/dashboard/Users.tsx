@@ -1,7 +1,9 @@
 import React from 'react'
+import BtnAdd from '../../components/BtnAdd'
 
 export default function Users() {
   return (
+    <>
     <div className='margin-content-sidebar p-3'>
     <div  className=" overflow-x-auto shadow-md sm:rounded-lg">
     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -486,5 +488,7 @@ export default function Users() {
     </table>
     </div>
   </div>
+  <BtnAdd/>
+    </>
   )
 }
