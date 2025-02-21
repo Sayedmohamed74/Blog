@@ -19,6 +19,7 @@ export default function useValidation(object: ZodRawShape, url: string) {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting, isSubmitted },
   } = useForm<SignInput>({
     mode: "onChange",
@@ -47,6 +48,7 @@ export default function useValidation(object: ZodRawShape, url: string) {
     isSubmitting,
     isSubmitted,
     onSubmit,
-    errorMessage
+    errorMessage,
+    setValue
   };
 }

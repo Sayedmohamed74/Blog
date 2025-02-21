@@ -4,25 +4,34 @@ import React, {
   Dispatch,
   SetStateAction,
   useContext,
+  useEffect,
   useLayoutEffect,
   useState,
 } from "react";
 import { urlApi } from "../utils/urlApi";
 import { getCookieByName } from "../utils/cookies";
-type userKey ={
-    id:number;
-    username: string;
-    email: string;
-    role: string;
-    createdAt: string;
-    updatedAt: string;
-  }|null;
+import Categories from "../pages/dashboard/Categories";
+interface Categories {
+  id: number;
+  name: string;
+  slug: string;
+  createdAt: string;
+  updatedAt: string;
+}
+type userKey = {
+  id: number;
+  username: string;
+  email: string;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
+} | null;
 interface User {
   user: userKey;
   token: string;
   setToken: Dispatch<SetStateAction<string>>;
-  Category: Array<object>;
-  setCategory: Dispatch<SetStateAction<Array<object>>>;
+  Category: Array<Categories>;
+  setCategory: Dispatch<SetStateAction<Array<Categories>>>;
   loader: boolean;
 }
 
@@ -35,7 +44,7 @@ export default function UserProvider({ children }: UserProviderProps) {
   const [user, setUser] = useState<userKey>(null);
   const [loader, setLoader] = useState<boolean>(true);
   const [token, setToken] = useState<string>("");
-  const [Category, setCategory] = useState([{}]);
+  const [Category, setCategory] = useState<Categories[]>([]);
   const tokenCookie = getCookieByName("token");
 
   const fetchUser = async () => {
@@ -65,8 +74,21 @@ export default function UserProvider({ children }: UserProviderProps) {
       setLoader(false);
     }
   }, [tokenCookie]);
+
+  useEffect(()=>{
+    const fetchCategories =async()=>{
+      await axios.get(urlApi.categories.getOrCreateCategories).then((e)=>{
+        setCategory(e.data.data)
+      }).catch(()=>{
+        setCategory([])
+      })
+    }
+    fetchCategories();
+    console.log(Category);
+    
+  },[])
   return (
-   <UserContext.Provider
+    <UserContext.Provider
       value={{ user, token, setToken, Category, setCategory, loader }}
     >
       {children}

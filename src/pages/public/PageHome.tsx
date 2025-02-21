@@ -1,4 +1,5 @@
 import React, {  MouseEvent, useEffect, useRef, useState } from "react";
+import type {  PostAll } from "../../utils/typesData";
 import CardCover from "../../components/CardCover";
 import ContainerCardPost from "../../components/ContainerCardPost";
 import CardPost from "../../components/CardPost";
@@ -22,30 +23,7 @@ export default function PageHome() {
     id: 0,
   });
   const pageIndex = useRef(0);
-  const [posts, setPosts] = useState<{
-    posts: Array<{
-      id: number;
-      title: string;
-      content: string;
-      authorId: number;
-      published: true;
-      cover: string;
-      createdAt: string;
-      updatedAt: string;
-      tags: string;
-      author: {
-        id: number;
-        username: string;
-        createdAt: string;
-        updatedAt: string;
-      };
-    }>;
-    total: number;
-    pages: number;
-    hasNext: boolean;
-    hasPrev: boolean;
-    nextPage: number;
-  }>({
+  const [posts, setPosts] = useState<PostAll>({
     posts: [],
     total: 0,
     pages: 0,
@@ -59,7 +37,10 @@ export default function PageHome() {
     await axios
       .get(urlApi.post.getOrCreatPosts+`?limit=9&page=${pageIndex.current}`)
       .then((res) => {
-        firstPost.current = res.data.data.posts[0];
+        if(firstPost.current.id===0){
+          firstPost.current = res.data.data.posts[0];
+        }
+  
         setPosts(res.data.data);
         setLoader(false)
       })
@@ -80,7 +61,7 @@ export default function PageHome() {
   useEffect(() => {
     fetchPosts();
   }, []);
-  console.log(posts);
+
   
   return (
     <div className="container">
