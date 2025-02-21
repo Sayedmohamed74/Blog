@@ -3,11 +3,11 @@ import { Link } from 'react-router'
 import { urlImg } from '../utils/urlApi'
 interface CardCoverProps {
     children: React.ReactNode,
-    cover:string,
-   id:number,
-    author:string
+    cover?:string,
+   id?:number,
+    author?:string
 }
-export default function CardCover({children,author,cover,id}:CardCoverProps) {
+export default function CardCover({children,author,cover="",id}:CardCoverProps) {
   return (
     <div className="w-full sm:w-1/2 rounded-md shadow-md  mx-auto p-4 mb-3">
       <div>
