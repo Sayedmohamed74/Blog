@@ -1,8 +1,11 @@
 import React from 'react'
-import BtnAdd from '../../components/BtnAdd'
+import { useUser } from '../../context/UserProvider'
+import { Navigate } from 'react-router';
 
 export default function Users() {
+  const store = useUser();
   return (
+    store?.user?.role.toLowerCase()==='admin'?
     <>
     <div className='margin-content-sidebar p-3'>
     <div  className=" overflow-x-auto shadow-md sm:rounded-lg">
@@ -488,7 +491,8 @@ export default function Users() {
     </table>
     </div>
   </div>
-  <BtnAdd/>
-    </>
+  
+    </>:
+    <Navigate to={'/dashboard/posts'} />
   )
 }

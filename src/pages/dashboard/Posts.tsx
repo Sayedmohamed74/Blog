@@ -485,7 +485,7 @@ export default function Posts() {
       </tbody>
     </table>
     </div>
-  </div>
+    </div>
   
   )
 }

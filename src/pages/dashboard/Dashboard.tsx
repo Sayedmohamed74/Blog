@@ -1,10 +1,23 @@
 import { useRef } from "react";
-import { Link, Outlet } from "react-router";
+import { Link, Navigate, Outlet } from "react-router";
+import { useUser } from "../../context/UserProvider";
 
 export default function Dashboard() {
   const sideBar = useRef<HTMLDivElement>(null);
+  const store = useUser();
+  const checkUser={
+    isToken:store?.token,
+    isAdmin:store?.user?.role.toLowerCase()==='admin',
+    isManagePost:store?.user?.role.toLowerCase()==='MANAGE_POSTS'.toLowerCase()
+  }
   return (
+    !store?.loader&&
+    (
     <>
+      {
+       ( checkUser.isToken &&( checkUser.isAdmin|| checkUser.isManagePost))
+       ?
+       <>
       <div
         ref={sideBar}
         className="sidebar p-3.5 border-r-2 basis-3xs shrink-0 border-gray-300"
@@ -48,7 +61,10 @@ export default function Dashboard() {
               <span className=" text-xl font-medium">Posts</span>
             </div>
           </Link>
-          <Link to="/dashboard/categories">
+        {
+          checkUser.isAdmin &&
+          <>
+            <Link to="/dashboard/categories">
             <div className="nav-item flex items-center gap-2.5">
               <svg
                 className="shrink-0"
@@ -84,9 +100,16 @@ export default function Dashboard() {
               <span className=" text-xl font-medium">Users</span>
             </div>
           </Link>
+          </>
+        }
         </div>
       </div>
       <Outlet />
+    </> : <Navigate to={'/'} replace={true} />
+      }
+    
     </>
+    )
   );
 }
+

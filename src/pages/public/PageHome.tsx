@@ -1,28 +1,126 @@
-import React from 'react'
-import CardCover from '../../components/CardCover'
-import ContainerCardPost from '../../components/ContainerCardPost'
-import CardPost from '../../components/CardPost'
+import React, {  MouseEvent, useEffect, useRef, useState } from "react";
+import CardCover from "../../components/CardCover";
+import ContainerCardPost from "../../components/ContainerCardPost";
+import CardPost from "../../components/CardPost";
+import axios from "axios";
+import { urlApi } from "../../utils/urlApi";
+import Loader from "../../components/Loader";
+
 
 export default function PageHome() {
-  return (
-    <div className='container'>
-        <CardCover>
-            <h1 className='font-semibold text-3xl my-1'>Post Title</h1>
-        </CardCover>
-        <ContainerCardPost>
-            <CardPost/>
-            <CardPost/>
-            <CardPost/>
-            <CardPost/>
-            <CardPost/>
-            <CardPost/>
-            <CardPost/>
-            <CardPost/>
-            <CardPost/>
-            <CardPost/>
-            <CardPost/>
-        </ContainerCardPost>
+  const firstPost = useRef<{
+    cover: string;
+    author: {
+      username: string;
+    };
+    id: number;
+  }>({
+    cover: "",
+    author: {
+      username: "",
+    },
+    id: 0,
+  });
+  const pageIndex = useRef(0);
+  const [posts, setPosts] = useState<{
+    posts: Array<{
+      id: number;
+      title: string;
+      content: string;
+      authorId: number;
+      published: true;
+      cover: string;
+      createdAt: string;
+      updatedAt: string;
+      tags: string;
+      author: {
+        id: number;
+        username: string;
+        createdAt: string;
+        updatedAt: string;
+      };
+    }>;
+    total: number;
+    pages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+    nextPage: number;
+  }>({
+    posts: [],
+    total: 0,
+    pages: 0,
+    hasNext: false,
+    hasPrev: false,
+    nextPage: 0,
+  });
+  const [loader,setLoader]=useState(false)
+  const fetchPosts = async () => {
+    setLoader(true)
+    await axios
+      .get(urlApi.post.getOrCreatPosts+`?limit=9&page=${pageIndex.current}`)
+      .then((res) => {
+        firstPost.current = res.data.data.posts[0];
+        setPosts(res.data.data);
+        setLoader(false)
+      })
+      .catch((err) => {
+        setLoader(false)
+        console.log(err);
+      });
+  };
+  const handlePagniation =(e:MouseEvent<HTMLButtonElement>)=>{
+    if(e.currentTarget.name==='next'){
+      pageIndex.current = pageIndex.current+1
+    }else{
+      pageIndex.current = pageIndex.current-1
+    }
+    fetchPosts();
+  }
 
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+  console.log(posts);
+  
+  return (
+    <div className="container">
+      <CardCover
+        id={firstPost?.current?.id}
+        cover={firstPost.current?.cover}
+        author={firstPost.current?.author?.username}
+      >
+        <h1 className="font-semibold text-3xl my-1">Post Title</h1>
+      </CardCover>
+      <ContainerCardPost>
+        {posts.posts?.map((e) => (
+          <CardPost data={e} />
+        ))}
+      </ContainerCardPost>
+      <div className="text-center">
+        <button
+          onClick={handlePagniation}
+          disabled={!posts.hasPrev}
+          name="prev"
+          type="button"
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
+        >
+          
+           prev
+       
+        </button>
+        <button
+        disabled={!posts.hasNext}
+          onClick={handlePagniation}
+          name="next"
+          type="button"
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center"
+        >
+          
+          Next
+         
+        </button>
+      </div>
+       {loader&&<Loader/>} 
     </div>
-  )
+  );
 }

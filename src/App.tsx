@@ -10,26 +10,31 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import Posts from "./pages/dashboard/Posts";
 import Categories from "./pages/dashboard/Categories";
 import Users from "./pages/dashboard/Users";
+import UserProvider from "./context/UserProvider";
+import ProtectPageAuth from "./components/ProtectPageAuth";
 
 function App() {
   return (
     <>
-      <BrowserRouter>
-        <Header />
-        <Routes>
-          <Route path="/" element={<PageHome />} />
-          <Route path="/sign-up" element={<PageSignUp />} />
-          <Route path="/sign-in" element={<PageSignIn />} />
-          <Route path="/post" element={<PagePost />} />
-          <Route path="/category/" element={<PagePostsByCategory />} />
-          <Route path="/dashboard/" element={<Dashboard />} >
-            <Route path="posts" element={<Posts />} />
-            <Route path="categories" element={<Categories />} />
-            <Route path="users" element={<Users />} />
-          </Route>
-        
-        </Routes>
-      </BrowserRouter>
+      <UserProvider>
+        <BrowserRouter>
+          <Header />
+          <Routes>
+            <Route path="/" element={<PageHome />} />
+            <Route element={<ProtectPageAuth />}>
+              <Route path="/sign-up" element={<PageSignUp />} />
+              <Route path="/sign-in" element={<PageSignIn />} />
+            </Route>
+            <Route path="/post" element={<PagePost />} />
+            <Route path="/category/" element={<PagePostsByCategory />} />
+            <Route path="/dashboard/" element={<Dashboard />}>
+              <Route path="posts" element={<Posts />} />
+              <Route path="categories" element={<Categories />} />
+              <Route path="users" element={<Users />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </UserProvider>
     </>
   );
 }

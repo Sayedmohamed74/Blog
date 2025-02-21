@@ -1,6 +1,16 @@
 import { Link } from "react-router";
+import { useUser } from "../context/UserProvider";
+import { logOut } from "../utils/authUser";
+import Spinner from "./Spinner";
+
 
 export default function Header() {
+  const store = useUser();
+   const handleLogOut = () => {
+    logOut();
+    store?.setToken("");
+  } 
+
   return (
     <header
       className=" sticky top-0 left-0 right-0 bg-white
@@ -15,23 +25,46 @@ export default function Header() {
           </div>
 
           <div className="flex items-center gap-3 text-sm font-medium">
-          {/*   <Link
-              to={"/sign-in"}
-              className=" px-3 py-2 bg-blue-400 hover:bg-white text-white hover:text-blue-400 transition-colors rounded-sm"
-            >
-              sign in
-            </Link>
-            <Link
-              to={"/sign-up"}
-              className="px-3 py-2 bg-white text-blue-400 hover:bg-blue-400 hover:text-white transition-colors  rounded-sm"
-            >
-              sign up
-            </Link> */}
-          <p className=" text-blue-700 text-[24px]">sayed</p>
+            {store?.loader ? <Spinner/> :
+            (<>
+             {!store?.token ? (
+              <>
+                <Link
+                  to={"/sign-in"}
+                  className=" px-3 py-2 bg-blue-400 hover:bg-white text-white hover:text-blue-400 transition-colors rounded-sm"
+                >
+                  sign in
+                </Link>
+                <Link
+                  to={"/sign-up"}
+                  className="px-3 py-2 bg-white text-blue-400 hover:bg-blue-400 hover:text-white transition-colors  rounded-sm"
+                >
+                  sign up
+                </Link>
+              </>
+            ) : (
+             ''
+            )}
+              {store?.token ? (
+              <>
+              {
+                (store.user?.role.toLowerCase()==='admin'||store.user?.role.toLowerCase()==='MANAGE_POSTS'.toLowerCase()) &&
+                <Link className=" text-xl" to={'/dashboard'}>
+              Dashboard
+              </Link>
+              }
+                <p className=" text-blue-700 text-[24px]">{store.user?.username}</p>
 
-            <button className=" px-3 py-2 bg-blue-400 hover:bg-white text-white hover:text-blue-400 transition-colors rounded-sm">
-              Log out
-            </button>
+                <button onClick={handleLogOut} className=" px-3 py-2 bg-blue-400 hover:bg-white text-white hover:text-blue-400 transition-colors rounded-sm">
+                  Log out
+                </button>
+              </>
+            ) : (
+              ''
+            )}
+            </>)}
+           
+           
           </div>
         </div>
       </nav>

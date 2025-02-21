@@ -1,7 +1,9 @@
-import { useState } from "react";
+import {  useState } from "react";
 import PopuUp from "./PopuUp";
-
-export default function BtnAdd() {
+interface BtnAddProps { 
+  children: React.ReactNode;
+}
+export default function BtnAdd({children}:BtnAddProps) {
     const [show,setShow]=useState(false);
   return (
     <>
@@ -11,7 +13,7 @@ export default function BtnAdd() {
         +
     </button>
     <PopuUp isShow={show} onHide={()=>{setShow(false)}}  >
-    <div className="p-4 md:p-5 text-center">
+    {/* <div className="p-4 md:p-5 text-center">
 
     <div className="space-y-12">
   <div className="border-b border-gray-900/10 pb-12">
@@ -134,7 +136,8 @@ export default function BtnAdd() {
   </div>
 </div>
 
-    </div>
+    </div> */}
+    {children}
     </PopuUp>
     </>
   )

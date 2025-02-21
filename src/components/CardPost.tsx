@@ -1,16 +1,49 @@
-export default function CardPost() {
+import { Link } from "react-router";
+import { urlImg } from "../utils/urlApi";
+
+interface CardPostProp {
+ data:{
+  id: number;
+  title:string ;
+  content:string ;
+  authorId:number;
+  published: true;
+  cover:string;
+  createdAt: string;
+  updatedAt:string;
+  tags: string;
+  author: {
+    id: number;
+    username: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+ }
+}
+export default function CardPost({ data }:CardPostProp) {
   return (
     <div className="bg-white shadow-md rounded-md p-4">
       <div>
-        <img className=" w-full aspect-3/2" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ718nztPNJfCbDJjZG8fOkejBnBAeQw5eAUA&s" />
+       <Link className="block" to={'/post/'+data.id}>
+       <img
+          className=" w-full aspect-3/2"
+          src={urlImg(data.cover)}
+        />
+       </Link>
       </div>
       <div className="info-post">
         <div className="flex justify-between items-center">
-            <span className="font-semibold text-gray-600">sayed</span>
-            <span className="text-neutral-400 ">12/12/2021</span>
+          <span className="font-semibold text-gray-600">{data.author.username}</span>
+          <span className="text-neutral-400 ">{new Date(data.updatedAt).toDateString()}</span>
         </div>
-        <h3 className="text-lg font-semibold">Title post</h3>
-        <p className="text-sm text-gray-500">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatibus harum voluptates illum nihil similique? Facilis, facere dolor! Odit sequi eius culpa tempora ex cum quisquam harum labore et. Nam, molestiae.</p>
+        <Link className="block" to={'/post/'+data.id}>
+        <h3 className="text-lg font-semibold">{data.title}</h3>
+        </Link>
+        <p className="text-sm text-gray-500">
+         {
+          data.content
+         }
+        </p>
       </div>
     </div>
   );
