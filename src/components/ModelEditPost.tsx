@@ -3,7 +3,7 @@ import axios from "axios";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import PopuUp from "./PopuUp";
@@ -13,17 +13,20 @@ import TextError from "./TextError";
 import { urlApi } from "../utils/urlApi";
 import Loader from "./Loader";
 
-export default function ModelAddPost() {
+export default function ModelEditPost({ data, show, onHide }) {
   const store = useUser();
-  const [show, setShow] = useState(false);
+const inputFiled =useRef<HTMLFieldSetElement|null>(null);
   const optionCategory = store?.Category.map((E) => {
     return { value: E.id, label: E.name };
+  });
+  const choosedCategory = data.categories?.map((e) => {
+    return { value: e.category.id, label: e.category.name };
   });
 
   const signSchema = z.object({
     categories: z
       .array(z.number())
-      .min(1, { message: "Please select at least one fruit" }).refine((e)=>{
+      .max(3, { message: "Please select at least one fruit" }).refine((e)=>{
         if(e.length <=3){
             return true
         }
@@ -36,7 +39,7 @@ export default function ModelAddPost() {
         if (data[0]) {
           return true;
         } else {
-          return false;
+          return true;
         }
       },
       { message: "image is required" }
@@ -52,76 +55,111 @@ export default function ModelAddPost() {
     register,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors, isSubmitting, isSubmitted },
   } = useForm<SignInput>({
     mode: "onChange",
     resolver: zodResolver(signSchema),
   });
-  const onSubmit: SubmitHandler<SignInput> = async (data) => {
-    await axios
-      .post("", data)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+
   useEffect(() => {
-    setValue("published", true);
-  }, []);
+    console.log(data.categories);
+    const s = store?.Category.map((e) => {
+      data?.categories?.forEach((element: any) => {
+        console.log(element);
+
+        if (element.category.id == e.id) {
+          console.log(e);
+        }
+      });
+    });
+
+
+    setValue("published", data.published);
+    setValue(
+      "categories",
+      data.categories?.map((e) => {
+        return e.category.id;
+      })
+    );
+    setValue("content", data.content);
+    
+
+    setValue("title", data.title);
+  }, [show]);
+
   return (
     <>
-      <button
-        onClick={() => {
-          setShow(true);
-        }}
-        className=" flex items-center justify-center p-0.5 fixed end-2 bottom-2 w-8 h-8 bg-blue-400 text-white  rounded-full"
-      >
-        +
-      </button>
-      <PopuUp
-        isShow={show}
-        onHide={() => {
-          setShow(false);
-        }}
-      >
-        <div className=" m-3 mt-9 ">
+      <PopuUp isShow={show} onHide={onHide}>
+        <div className=" m-5 mt-9 ">
           <form
             onSubmit={handleSubmit(async (E) => {
-              const tokenAuth ={
+                
+               
+                
+               
+               const tokenAuth ={
               
                   Authorization: `Bearer ${store?.token}`,
                   
                 
               }
-              const bodyCover = new FormData();
-              bodyCover.append("cover", E.cover[0]);
-              await axios
-                .post(urlApi.cover, bodyCover, {
-                  headers:{
-                    ...tokenAuth,
+        if(E.cover.length){
+            const bodyCover = new FormData();
+            bodyCover.append("cover", E.cover[0]);
+            await axios
+              .post(urlApi.cover, bodyCover, {
+                headers:{
+                  ...tokenAuth,
 "Content-Type": " multipart/form-data",
-                  }
+                }
+                
+              })
+              .then(async (T) => {
+                const texCover: string = T.data.data;
+                const o ={...E,
+                  cover: texCover,
+                  tags: ['hello'],}
+                  console.log(o);
                   
-                })
-                .then(async (T) => {
-                  const texCover: string = T.data.data;
-                  const o ={...E,
-                    cover: texCover,
-                    tags: ['hello'],}
-                    console.log(o);
-                    
-                  await axios.post(urlApi.post.getOrCreatPosts, {
-                    ...o
-                  },
-                {
-                  headers:{
-                    ...tokenAuth,
-                    'Content-Type': 'application/json'
-                  }
-                });
-                });
+                await axios.patch(urlApi.post.updatePost(data?.id), {
+                  ...o
+                },
+              {
+                headers:{
+                  ...tokenAuth,
+                  'Content-Type': 'application/json'
+                }
+              }).then(e=>{
+                  console.log(e);
+                  
+              });
+              }); 
+      
+        }
+        else{
+            
+            const o ={...E,
+              cover: data?.cover,
+              tags: ['hello'],}
+              delete o.cover;
+              console.log(o);
+              
+              
+            await axios.patch(urlApi.post.updatePost(data?.id), {
+              ...o
+            },
+          {
+            headers:{
+              ...tokenAuth,
+              'Content-Type': 'application/json'
+            }
+          }).then(e=>{
+              console.log(e);
+              
+          });
+        }
+
             })}
           >
             <Select
@@ -138,7 +176,7 @@ export default function ModelAddPost() {
               }}
               closeMenuOnSelect={false}
               components={makeAnimated()}
-              defaultValue={[]}
+              defaultValue={choosedCategory}
               isMulti
               options={optionCategory}
             />
@@ -169,7 +207,7 @@ export default function ModelAddPost() {
           </form>
         </div>
       </PopuUp>
-       {isSubmitting && <Loader/>}
+      {isSubmitting && <Loader/>}
     </>
   );
 }

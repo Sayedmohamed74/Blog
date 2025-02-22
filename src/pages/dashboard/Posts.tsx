@@ -4,9 +4,20 @@ import axios from "axios";
 import { urlApi } from "../../utils/urlApi";
 import Loader from "../../components/Loader";
 import ModelAddPost  from "../../components/ModelAddPost";
+import ModelEditPost  from "../../components/ModelEditPost";
 
 
 export default function Posts() {
+  const [modelEdit ,setModelEdit]=useState({
+    show:false,
+    data:{}
+  })
+  const handleOpenModel = (data) => {
+    setModelEdit({
+      show: true,
+      data: data
+    });
+  };
   const pageIndex = useRef(0);
   const [posts, setPosts] = useState<PostAll>({
     posts: [],
@@ -81,12 +92,14 @@ export default function Posts() {
           <td className="px-6 py-4">{e.categories[0].category.name}</td>
           <td className="px-6 py-4">{new Date(e.updatedAt).toISOString()||''}</td>
           <td className="px-6 py-4">
-            <a
-              href="#"
+            <button
+             onClick={()=>{
+              handleOpenModel(e)
+             }}
               className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
             >
               Edit
-            </a>
+            </button>
           </td>
         </tr>
         ))}
@@ -122,6 +135,12 @@ export default function Posts() {
       </div>
       {loader&&<Loader/>}
       <ModelAddPost/>
+      <ModelEditPost data={modelEdit.data} show={modelEdit.show} onHide={()=>{
+        setModelEdit({
+          show:false,
+          data:{}
+        })
+      }}/>
     </div>
   
   )

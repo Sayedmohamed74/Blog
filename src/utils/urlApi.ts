@@ -26,7 +26,8 @@ export const urlApi = {
     getOrCreateComments:baseUrl + 'comments',
     oneComment:(id:number)=>baseUrl + 'comments/'+id,
     deleteComment:(id:number)=>baseUrl + 'comments/'+id,
-  }
+  },
+  cover:baseUrl+'uploads/posts'
 
 
 
