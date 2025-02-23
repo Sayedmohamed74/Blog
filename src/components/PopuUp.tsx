@@ -21,7 +21,7 @@ export default function PopuUp({ children, isShow ,onHide}: PopuUpProps) {
   const close: () => void = () => {
     onHide();   
   };
-console.log( isShow);
+
 
   useEffect(() => {
     

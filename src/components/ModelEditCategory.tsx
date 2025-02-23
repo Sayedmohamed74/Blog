@@ -27,7 +27,6 @@ const store =useUser();
         store?.setCategory((prev)=>prev.map(e=>e.id===id?t.data.data:e));
 
     }).catch(e=>{
-        console.log(e);
         
         setErrMeassage(e.response.data.message)
     })

@@ -56,8 +56,6 @@ export default function UserProvider({ children }: UserProviderProps) {
       })
       .then((res) => {
         setUser(res.data.data);
-        console.log(res.data.data);
-        console.log(tokenCookie);
 
         setToken(tokenCookie);
         setLoader(false);
@@ -84,7 +82,6 @@ export default function UserProvider({ children }: UserProviderProps) {
       })
     }
     fetchCategories();
-    console.log(Category);
     
   },[])
   return (

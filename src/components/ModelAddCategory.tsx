@@ -25,12 +25,10 @@ const store =useUser();
     }).then(e=>{
         store?.setCategory((prev)=>[...prev,e.data.data])
     }).catch(e=>{
-        console.log(e);
         
         setErrMeassage(e.response.data.message)
     })
   }
-  console.log(errorMessage);
   
   return (
     <>

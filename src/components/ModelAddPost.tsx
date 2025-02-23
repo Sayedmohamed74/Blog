@@ -8,7 +8,6 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import PopuUp from "./PopuUp";
 import { useUser } from "../context/UserProvider";
-import InputFiled from "../pages/public/InputFiled";
 import TextError from "./TextError";
 import { urlApi } from "../utils/urlApi";
 import Loader from "./Loader";
@@ -20,15 +19,15 @@ export default function ModelAddPost() {
     return { value: E.id, label: E.name };
   });
 
-  const signSchema = z.object({
+  const payloadSchema = z.object({
     categories: z
       .array(z.number())
-      .min(1, { message: "Please select at least one fruit" }).refine((e)=>{
-        if(e.length <=3){
-            return true
-        }
-        else{
-            return false
+      .min(1, { message: "Please select at least one fruit" })
+      .refine((e) => {
+        if (e.length <= 3) {
+          return true;
+        } else {
+          return false;
         }
       }),
     cover: z.instanceof(FileList, { message: "image" }).refine(
@@ -46,25 +45,46 @@ export default function ModelAddPost() {
 
     published: z.boolean(),
   });
-  type SignInput = z.infer<typeof signSchema>;
+  type payload = z.infer<typeof payloadSchema>;
 
   const {
     register,
     handleSubmit,
     setValue,
-    formState: { errors, isSubmitting, isSubmitted },
-  } = useForm<SignInput>({
+    formState: { errors, isSubmitting },
+  } = useForm<payload>({
     mode: "onChange",
-    resolver: zodResolver(signSchema),
+    resolver: zodResolver(payloadSchema),
   });
-  const onSubmit: SubmitHandler<SignInput> = async (data) => {
+  const handleSubmitAdd: SubmitHandler<payload> = async (E) => {
+    const tokenAuth = {
+      Authorization: `Bearer ${store?.token}`,
+    };
+    const bodyCover = new FormData();
+    bodyCover.append("cover", E.cover[0]);
     await axios
-      .post("", data)
-      .then((res) => {
-        console.log(res);
+      .post(urlApi.cover, bodyCover, {
+        headers: {
+          ...tokenAuth,
+          "Content-Type": " multipart/form-data",
+        },
       })
-      .catch((err) => {
-        console.log(err);
+      .then(async (T) => {
+        const texCover: string = T.data.data;
+        const o = { ...E, cover: texCover, tags: ["hello"] };
+
+        await axios.post(
+          urlApi.post.getOrCreatPosts,
+          {
+            ...o,
+          },
+          {
+            headers: {
+              ...tokenAuth,
+              "Content-Type": "application/json",
+            },
+          }
+        );
       });
   };
   useEffect(() => {
@@ -87,50 +107,13 @@ export default function ModelAddPost() {
         }}
       >
         <div className=" m-3 mt-9 ">
-          <form
-            onSubmit={handleSubmit(async (E) => {
-              const tokenAuth ={
-              
-                  Authorization: `Bearer ${store?.token}`,
-                  
-                
-              }
-              const bodyCover = new FormData();
-              bodyCover.append("cover", E.cover[0]);
-              await axios
-                .post(urlApi.cover, bodyCover, {
-                  headers:{
-                    ...tokenAuth,
-"Content-Type": " multipart/form-data",
-                  }
-                  
-                })
-                .then(async (T) => {
-                  const texCover: string = T.data.data;
-                  const o ={...E,
-                    cover: texCover,
-                    tags: ['hello'],}
-                    console.log(o);
-                    
-                  await axios.post(urlApi.post.getOrCreatPosts, {
-                    ...o
-                  },
-                {
-                  headers:{
-                    ...tokenAuth,
-                    'Content-Type': 'application/json'
-                  }
-                });
-                });
-            })}
-          >
+          <form onSubmit={handleSubmit(handleSubmitAdd)}>
             <Select
               {...register("categories")}
               onChange={(newValue) => {
                 const selectedValues = (
                   newValue as { value: string; label: string }[]
                 ).map((e) => e.value);
-                console.log(selectedValues);
                 setValue(
                   "categories",
                   selectedValues.map((value) => Number(value))
@@ -169,7 +152,7 @@ export default function ModelAddPost() {
           </form>
         </div>
       </PopuUp>
-       {isSubmitting && <Loader/>}
+      {isSubmitting && <Loader />}
     </>
   );
 }

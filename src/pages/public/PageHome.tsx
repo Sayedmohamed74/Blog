@@ -44,9 +44,8 @@ export default function PageHome() {
         setPosts(res.data.data);
         setLoader(false)
       })
-      .catch((err) => {
+      .catch(() => {
         setLoader(false)
-        console.log(err);
       });
   };
   const handlePagniation =(e:MouseEvent<HTMLButtonElement>)=>{

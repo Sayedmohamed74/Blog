@@ -9,7 +9,6 @@ import Comments from "../../components/Comments";
 export default function PagePost() {
   const{id} =useParams();
   const [post,setPost]=useState<Post>()
-  console.log(id);
   const fetchPost =async()=>{
     await axios
     .get(urlApi.post.onePost(Number(id)))
@@ -17,10 +16,7 @@ export default function PagePost() {
       setPost(res.data.data);
      
     })
-    .catch((err) => {
-      
-      console.log(err);
-    });
+   
 
   }
 

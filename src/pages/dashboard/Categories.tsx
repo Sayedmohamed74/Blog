@@ -4,6 +4,8 @@ import { useUser } from "../../context/UserProvider";
 import ModelAddCategory from "../../components/ModelAddCategory";
 import ModelEditCategory from "../../components/ModelEditCategory";
 import { useState } from "react";
+import ModelDeleteCategories from "../../components/ModelDelete";
+import { urlApi } from "../../utils/urlApi";
 
 
 export default function Categories() {
@@ -12,14 +14,21 @@ export default function Categories() {
     show:false,
     data:{name:'',slug:'',id:0}
   })
+  const [ModelDelete ,setModelDelete]=useState({
+    show:false,
+    id:0
+  })
   const handleOpenModel = (data) => {
     setModelEdit({
       show: true,
       data: data
     });
   };
-  console.log(modelEdit);
-  
+  const handleUpdateDelete =(id:number)=>{
+    const cloneCategories=store?.Category;
+    const newCategories=cloneCategories?.filter((post)=>post.id!==id&&post)
+    store?.setCategory(newCategories||[])
+  }
   return (
     store?.user?.role.toLowerCase()==='admin'?
     <>
@@ -45,7 +54,7 @@ export default function Categories() {
       <tbody>
         {
           store.Category.map(e=>(
-             <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 border-gray-200">
+             <tr key={e.id} className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 border-gray-200">
           <th
             scope="row"
             className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-36 text-ellipsis overflow-hidden"
@@ -64,7 +73,19 @@ export default function Categories() {
             >
               Edit
             </button>
+            <button
+             onClick={()=>{
+              setModelDelete({
+                show:true,
+                id:e.id
+              })
+             }}
+              className="font-medium text-red-600 dark:text-red-500 hover:underline"
+            >
+              Delete
+            </button>
           </td>
+       
         </tr>
           ))
         }
@@ -77,6 +98,12 @@ export default function Categories() {
     </div>
   </div>
   <ModelAddCategory/>
+  <ModelDeleteCategories id={ModelDelete.id} show={ModelDelete.show} url={urlApi.categories.updateCategories(ModelDelete.id)}  handleUpdate={handleUpdateDelete} onHide={()=>{
+    setModelDelete({
+      show:false,
+      id:0
+    })
+  }}  />
   <ModelEditCategory id={modelEdit.data.id} show={modelEdit.show} name={modelEdit.data.name} slug={modelEdit.data.slug} onHide={()=>{
     setModelEdit({
       data:{name:'',slug:""},

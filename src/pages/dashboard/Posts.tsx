@@ -1,10 +1,11 @@
 import { MouseEvent, useEffect, useRef, useState } from "react";
-import { PostAll } from "../../utils/typesData";
+import { Post, PostAll } from "../../utils/typesData";
 import axios from "axios";
 import { urlApi } from "../../utils/urlApi";
 import Loader from "../../components/Loader";
 import ModelAddPost  from "../../components/ModelAddPost";
 import ModelEditPost  from "../../components/ModelEditPost";
+import ModelDeletePost from "../../components/ModelDelete";
 
 
 export default function Posts() {
@@ -12,12 +13,12 @@ export default function Posts() {
     show:false,
     data:{}
   })
-  const handleOpenModel = (data) => {
-    setModelEdit({
-      show: true,
-      data: data
-    });
-  };
+  const [ModelDelete ,setModelDelete]=useState({
+    show:false,
+    id:0
+  })
+ 
+
   const pageIndex = useRef(0);
   const [posts, setPosts] = useState<PostAll>({
     posts: [],
@@ -39,7 +40,6 @@ export default function Posts() {
       })
       .catch((err) => {
         setLoader(false)
-        console.log(err);
       });
   };
   const handlePagniation =(e:MouseEvent<HTMLButtonElement>)=>{
@@ -50,7 +50,18 @@ export default function Posts() {
     }
     fetchPosts();
   }
-
+  const handleOpenModel = (data:Post) => {
+    setModelEdit({
+      show: true,
+      data: data
+    });
+  };
+  const handleUpdateDelete =(id:number)=>{
+    const clonePosts={...posts};
+    const newPosts=clonePosts.posts.filter((post)=>post.id!==id&&post)
+    
+    setPosts({...posts,posts:newPosts})
+  }
   useEffect(() => {
     fetchPosts();
   }, []);
@@ -89,7 +100,7 @@ export default function Posts() {
             {e.title}
           </th>
           <td className="px-6 py-4">{e.author.username}</td>
-          <td className="px-6 py-4">{e.categories[0].category.name}</td>
+          <td className="px-6 py-4">{e?.categories[0]?.category?.name}</td>
           <td className="px-6 py-4">{new Date(e.updatedAt).toISOString()||''}</td>
           <td className="px-6 py-4">
             <button
@@ -99,6 +110,17 @@ export default function Posts() {
               className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
             >
               Edit
+            </button>
+            <button
+             onClick={()=>{
+              setModelDelete({
+                show:true,
+                id:e.id
+              })
+             }}
+              className="font-medium text-red-600 dark:text-red-500 hover:underline"
+            >
+              Delete
             </button>
           </td>
         </tr>
@@ -135,6 +157,12 @@ export default function Posts() {
       </div>
       {loader&&<Loader/>}
       <ModelAddPost/>
+      <ModelDeletePost id={ModelDelete.id} url={urlApi.post.updatePost(ModelDelete.id)} handleUpdate={handleUpdateDelete}  show={ModelDelete.show} onHide={()=>{
+        setModelDelete({
+          show:false,
+          id:0
+        })
+      }}/>
       <ModelEditPost data={modelEdit.data} show={modelEdit.show} onHide={()=>{
         setModelEdit({
           show:false,

@@ -3,19 +3,17 @@ import axios from "axios";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 
-import React, { useEffect, useRef, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import  { useEffect,  } from "react";
+import {  useForm } from "react-hook-form";
 import { z } from "zod";
 import PopuUp from "./PopuUp";
 import { useUser } from "../context/UserProvider";
-import InputFiled from "../pages/public/InputFiled";
 import TextError from "./TextError";
 import { urlApi } from "../utils/urlApi";
 import Loader from "./Loader";
 
 export default function ModelEditPost({ data, show, onHide }) {
   const store = useUser();
-const inputFiled =useRef<HTMLFieldSetElement|null>(null);
   const optionCategory = store?.Category.map((E) => {
     return { value: E.id, label: E.name };
   });
@@ -55,24 +53,15 @@ const inputFiled =useRef<HTMLFieldSetElement|null>(null);
     register,
     handleSubmit,
     setValue,
-    reset,
-    formState: { errors, isSubmitting, isSubmitted },
+    
+    formState: { errors, isSubmitting },
   } = useForm<SignInput>({
     mode: "onChange",
     resolver: zodResolver(signSchema),
   });
 
   useEffect(() => {
-    console.log(data.categories);
-    const s = store?.Category.map((e) => {
-      data?.categories?.forEach((element: any) => {
-        console.log(element);
-
-        if (element.category.id == e.id) {
-          console.log(e);
-        }
-      });
-    });
+ 
 
 
     setValue("published", data.published);
